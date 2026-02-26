@@ -1,5 +1,5 @@
-# excellence-MOR
-Repository of the excellence course on Model Order Reduction at Castelnuovo in Sapienza
+# Model order reduction course for excellence programme at Castelnuovo in Sapienza
+Repository of the excellence course on Model Order Reduction at Castelnuovo in Sapienza by [Alesandro Alla](https://www.alessandroalla.com/) and [Davide Torlo](https://davidetorlo.it).
 
 
 # Programme
@@ -10,6 +10,6 @@ Repository of the excellence course on Model Order Reduction at Castelnuovo in S
 | Proper Orthogonal Decomposition | | | |
 | DEIM | | | |
 | POD-NN and autoencoders | | | |
-
+| DMD ? | | | |
 # Schedule
 
