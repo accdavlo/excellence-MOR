@@ -64,33 +64,8 @@ $\textbf{n}$ is the normal vector going out of the domain $\Omega$ in each point
 
 Elastic application -> prescribed surface traction or stress on the boundary. 
 
-
-
-
---- 
-<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
-
-## Boundary conditions
-
-### Geometric Combinations
-$$
-\begin{align*}
-    &\partial\Omega = \Gamma_D \cup \Gamma_N, \qquad \Gamma_D^\circ \cap \Gamma_N^\circ = \emptyset\\
-&\begin{cases}
-    u=g \text{ on }\Gamma_D\\
-    \nabla u \cdot \textbf{n} = g \text{ on }\Gamma_N.
-\end{cases}
-\end{align*}
-$$
-
-### Physical Combinations: Robin boundary
-$$
-\begin{align*}
-    \nabla u \cdot \textbf{n} + \gamma u = r \text{ on }\Gamma_R.
-\end{align*}
-$$
-
-
+### Existence and uniqueness of the solution
+Given the Poisson problem with a bit of Dirichlet BC, we have existence and uniqueness of the solution.
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
@@ -99,7 +74,7 @@ $$
 
 Given a domain $\Omega \in \mathbb R$ we look for a solution $u:\Omega \times \mathbb R^+ \to \mathbb R$ solution of 
 
-$$\partial_t u(t,x) -a \partial_{xx} u(t,x) = f(t,x),$$
+$$\partial_t u(t,x) -a \partial_{xx} u(t,x) = f(t,x,u),$$
 with $a>0$.
 
 ### Physical applications
@@ -117,17 +92,13 @@ with $a>0$.
 We couple the PDE with initial conditions (IC) at time $t=0$ AND boundary conditions (either Neumann or Dirichlet) for all times $t\in\mathbb R^{+}$. 
 $$
 \begin{cases}
-    \partial_t u(t,x) -a \partial_{xx} u(t,x) = f(t,x), & t>0, x\in\Omega\\
+    \partial_t u(t,x) -a \partial_{xx} u(t,x) = f(t,x,u), & t>0, x\in\Omega\\
     u(0,x)=u_0(x), & x\in\Omega,\\  
     u(t,x) = u_D(t,x), & \forall t \in \mathbb R^+, x\in\Gamma_D \subset \partial \Omega,\\
     \partial_x u(t,x) \cdot \mathbf{n} = u_N(t,x), & \forall t \in \mathbb R^+, x\in\Gamma_N \subset \partial \Omega.
 \end{cases}
 $$
 
-### Periodic boundary conditions
-Alternatively, for boundary conditions one can impose periodic conditions, i.e., if $\Omega = [a,b]$, then 
-$$u(t,a)=u(t,b)$$
- for all $t\in \mathbb R^+$.
 
 ---
 <style scoped>section{font-size:20px;padding:50px;padding-top:0px}</style>
@@ -170,7 +141,7 @@ paginate: true
 _class: titlepage
 -->
 
-# Finite Difference for Elliptic Differential Equations
+# Finite Difference for Differential Equations
 
 
 
@@ -274,29 +245,6 @@ Error-wise central is better, but physics may not be central, time for example f
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
-## Order of accuracy
-The order of accuracy of an approximation of a function $f$ describes how the error decreases as the grid spacing or time step decreases. The order of accuracy is determined by the leading term in the error expansion.
-
-### Definition
-Let $f_h(x)$ be an approximation of a bounded function $f:[a,b]\to \mathbb R$ in a point $x$ with discretization parameter $h>0$. We say that $f_h(x)$ is convergent if 
-$$
-\lim_{h\to 0} (f_h(x)-f(x))=0.
-$$
-
-
-We say that $f_h(x)$ converges to $f(x)$ with order $p$ with respect to $h$ if 
-$$
-|f_h(x) - f(x)| = O( h^p).
-$$
-
-* $\delta_{h,-}u$ and $\delta_{h,+}u$ are first order approximations of $\partial_x u$
-* $\delta_{h}u$ is a second order approximation of $\partial_x u$
- 
-
-
----
-<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
-
 ## Divided differences for two-point boundary problems
 
 Let's start with a simple boundary value problem:
@@ -325,13 +273,13 @@ $$
 
 We can write this system in matrix form as
 $$
-\underbrace{-\frac{1}{h^2}\begin{bmatrix}
+-\frac{1}{h^2}\underbrace{\begin{bmatrix}
 -2 & 1 & 0 & \dots & 0\\
 1 & -2 & 1 & \dots & 0\\
 0 & 1 & -2 & \dots & 0\\
 \vdots & \vdots & \vdots & \ddots & \vdots\\
 0 & 0 & 0 & \dots & -2
-\end{bmatrix}}_{=:A}
+\end{bmatrix}}_{=:D_2}
 \underbrace{\begin{bmatrix}
 u_1\\
 u_2\\
@@ -348,7 +296,7 @@ f(x_3)\\
 f(x_{N-1})
 \end{bmatrix}}_{=:F}
 $$
-We can use our favourite linear solver to find the solution $U$ from $AU=F$.
+We can use our favourite linear solver to find the solution $U$ from $AU=F$, with $A=-\frac1{h^2}$.
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
@@ -470,36 +418,13 @@ $$
 $$
 * Linear system 
 $$
-LHS =I-\frac{\Delta t}{\Delta x^2} D^2 = \begin{pmatrix}
+LHS =I-\frac{\Delta t}{\Delta x^2} D_2 = \begin{pmatrix}
 1+2\frac{\Delta t}{\Delta x^2} &-\frac{\Delta t}{\Delta x^2} & 0&\dots & \dots\\
 -\frac{\Delta t}{\Delta x^2} &1+2\frac{\Delta t}{\Delta x^2} &-\frac{\Delta t}{\Delta x^2} &\dots & \dots\\
 \vdots & \ddots & \ddots & \ddots &\vdots\\
 0&\dots & \dots &-\frac{\Delta t}{\Delta x^2} &1+2\frac{\Delta t}{\Delta x^2}     
 \end{pmatrix} \qquad RHS = u^n
 $$
-
-
----
-<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
-
-
-### Crank-Nicolson
-$$
-\frac{u^{n+1}_i-u^n_i}{\Delta t} - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{2\Delta x^2}- \frac{u_{i+1}^{n}-2u_i^{n}+u_{i-1}^{n}}{2\Delta x^2}=0 
-$$
-* Linear system 
-$$
-LHS = I-\frac{1}{2}\frac{\Delta t}{\Delta x^2} D^2 = \begin{pmatrix}
-1+\frac{\Delta t}{\Delta x^2} &-\frac{\Delta t}{2\Delta x^2} & 0&\dots & \dots\\
--\frac{\Delta t}{2\Delta x^2} &1+\frac{\Delta t}{\Delta x^2} &-\frac{\Delta t}{2\Delta x^2} &\dots & \dots\\
-\vdots & \ddots & \ddots & \ddots &\vdots\\
-0&\dots & \dots &-\frac{\Delta t}{2\Delta x^2} &1+\frac{\Delta t}{\Delta x^2}     
-\end{pmatrix}
-$$
-$$
-RHS = u^n +\frac12 \frac{\Delta t}{\Delta x^2} D^2 u^n
-$$
-
 
 
 ---
@@ -593,20 +518,20 @@ $$
 # Newton's method for nonlinear problems (1/2)
 $$
 \begin{align*}
-&F(u^{n+1})_i = \frac{u^{n+1}_i-u^n_i}{\Delta t} - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{\Delta x^2}- u_i^{n+1}+(u_i^{n+1})^3\\
-&J_{u^{n+1}}F(u^{n+1})_{ij} = \partial_{u^{n+1}_j} F(u^{n+1})_i = \frac{\delta_{ij}}{\Delta t} - \frac{\delta_{i+1,j}-2\delta_{i,j}+\delta_{i-1,j}}{\Delta x^2}- \delta_{ij}+3(u_i^{n+1})^2 \delta_{ij}
+&F(u^{n+1})_i = u^{n+1}_i-u^n_i +\Delta t\left( - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{\Delta x^2}- u_i^{n+1}+(u_i^{n+1})^3\right)\\
+&J_{u^{n+1}}F(u^{n+1})_{ij} = \partial_{u^{n+1}_j} F(u^{n+1})_i = \delta_{ij} + \Delta t\left(- \frac{\delta_{i+1,j}-2\delta_{i,j}+\delta_{i-1,j}}{\Delta x^2}- \delta_{ij}+3(u_i^{n+1})^2 \delta_{ij}\right)
 \end{align*}
 $$
 
 $$
 \begin{align*}
-&J_{u^{n+1}}F(u) =\frac{I}{\Delta t}-\frac{D^2}{\Delta x^2} - I + 3\textrm{diag}(u^2)I  =\\
+&J_{u^{n+1}}F(u) = I+\Delta t\left(-\frac{D_2}{\Delta x^2} - I + 3\textrm{diag}(u^2)I \right) =\\
 &\begin{pmatrix}
-\frac{1}{\Delta t}+2\frac{1}{\Delta x^2}-1+3(u_1)^2 &-\frac{1}{\Delta x^2} & 0&\dots & \dots\\
--\frac{1}{\Delta x^2} &\frac{1}{\Delta t}+2\frac{1}{\Delta x^2}-1+3(u_2)^2 &-\frac{1}{\Delta x^2} &\dots & \dots\\
+1+\Delta t(2\frac{1}{\Delta x^2}-1+3(u_1)^2) &-\frac{\Delta t}{\Delta x^2} & 0&\dots & \dots\\
+-\frac{\Delta t}{\Delta x^2} &1+\Delta t\left(2\frac{1}{\Delta x^2}-1+3(u_2)^2\right) &-\frac{\Delta t}{\Delta x^2} &\dots & \dots\\
 \vdots & \ddots & \ddots & \ddots &\vdots\\
 \vdots & \ddots & \ddots & \ddots &\vdots\\
-0&\dots & \dots &-\frac{1}{\Delta x^2} &\frac{1}{\Delta t}+2\frac{1}{\Delta x^2}-1+3(u_{N_x})^2     
+0&\dots & \dots &-\frac{\Delta t}{\Delta x^2} &1+\Delta t(2\frac{1}{\Delta x^2}-1+3(u_{N_x})^2)     
 \end{pmatrix}
 \end{align*}
 $$
