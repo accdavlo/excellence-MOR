@@ -1,5 +1,5 @@
 # Model order reduction course for excellence programme at Castelnuovo in Sapienza
-Repository of the excellence course on Model Order Reduction at Castelnuovo in Sapienza by [Alesandro Alla](https://www.alessandroalla.com/) and [Davide Torlo](https://davidetorlo.it).
+Repository of the excellence course on Model Order Reduction at Castelnuovo in Sapienza by [Alessandro Alla](https://www.alessandroalla.com/) and [Davide Torlo](https://davidetorlo.it).
 
 
 # Programme
