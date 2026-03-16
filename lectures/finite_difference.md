@@ -72,9 +72,9 @@ Given the Poisson problem with a bit of Dirichlet BC, we have existence and uniq
 
 # Heat equation
 
-Given a domain $\Omega \in \mathbb R$ we look for a solution $u:\Omega \times \mathbb R^+ \to \mathbb R$ solution of 
+Given a domain $\Omega \in \mathbb R^d$ we look for a solution $u:\Omega \times \mathbb R^+ \to \mathbb R$ solution of 
 
-$$\partial_t u(t,x) -a \partial_{xx} u(t,x) = f(t,x,u),$$
+$$\partial_t u(t,x) -a \Delta u(t,x) = f(t,x,u),\qquad \partial_tu-a\partial_{xx}u=f\,\,\text{(in 1D)},$$
 with $a>0$.
 
 ### Physical applications
@@ -103,33 +103,33 @@ $$
 ---
 <style scoped>section{font-size:20px;padding:50px;padding-top:0px}</style>
 
-# Today's Working Problems
-## Poisson equation in 1D
+# Today's Working Problems ($d=1$ or $d=2$)
+## Poisson equation
 $$
 \begin{cases}
     \Omega = [0,1]\\
-    -u''(x) = f(x) \text{ in } (0,1)\\
-    u(0)=u(1)=0
+    -\Delta u(x) = f(x) \text{ in } \Omega:=[0,1]^d\\
+    u(x)=0,\quad \forall x\in \partial \Omega.
 \end{cases}
 $$
 
-## Heat equation in 1D
+## Heat equation
 $$
 \begin{cases}
     \Omega = [0,1]\\
-    \partial_t u(t,x) -a \partial_{xx} u(t,x) = f(t,x), & t>0, x\in(0,1)\\
-    u(0,x)=u_0(x), & x\in(0,1),\\
-    u(t,0)=u(t,1)=0, & \forall t \in \mathbb R^+, x\in\{0,1\}.
+    \partial_t u(t,x) -a \Delta  u(t,x) = f(t,x), & t>0, x\in\Omega:=[0,1]^d\\
+    u(0,x)=u_0(x), & x\in \Omega,\\
+    u(t,0)=u(t,1)=0, & \forall t \in \mathbb R^+, x\in\partial \Omega.
 \end{cases}
 $$
 
-## Cahn-Hilliard in 1D
+## Allen-Cahn
 $$
 \begin{cases}
     \Omega = [0,1]\\
-    \partial_t u(t,x) -a \partial_{xx} u(t,x) = (u(x)-u^3(x)), & t>0, x\in(0,1)\\
-    u(0,x)=u_0(x), & x\in(0,1),\\
-    u(t,0)=u(t,1)=0, & \forall t \in \mathbb R^+, x\in\{0,1\}.
+    \partial_t u(t,x) -a \Delta  u(t,x) = (u(x)-u^3(x)), & t>0, x\in \Omega:=[0,1]^d\\
+    u(0,x)=u_0(x), & x\in [0,1]^d,\\
+    u(t,0)=u(t,1)=0, & \forall t \in \mathbb R^+, x\in \partial \Omega.
 \end{cases}
 $$
 
@@ -148,7 +148,7 @@ _class: titlepage
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
-We have seen how the equations are defined. In some cases there are exact solutions, and we have found some. But in many other cases there is no known analytical solution.
+We have seen how the equations are defined. In some cases there are exact solutions, but in many other cases there is no known analytical solution.
 
 Numerical analysis comes in help to find **approximations** of such solutions. 
 
@@ -204,42 +204,25 @@ for $x+h/2,x-h/2\in[a,b]$.
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
 
-### Property
-If $u$ is has the left derivative $u'_-(x)$, the right derivative $u'_+(x)$ and the derivative $u'(x)$ in $x$, then
-$$\lim_{h\to 0} \delta_{h,-}u(x) = u'_-(x),\qquad \lim_{h\to 0} \delta_{h,+}u(x) = u'_+(x),\qquad \lim_{h\to 0} \delta_{h}u(x) = u'(x).$$
+### Central divided difference for second order derivative
+We apply recursively the left and the right first order divided differnce 
+$$
+\delta^2_h u(x) := \delta_{h,-} \left( \delta_{h,+} u \right) (x) = \delta_{h,-} \left( \frac{u(x+h)-u(x)}{h} \right) = \frac{ u(x+h)-2u(x)  + u(x-h)}{h^2}.
+$$
 
-So, given a fixed $h$, we can use these divided differences as approximations of the derivatives. 
-* How good are these approximations?
-* Which one is preferable?
+If $u$ is has the second derivative $u''(x)$ in $x$, then
+$$\lim_{h\to 0} \delta^2_{h}u(x) = u''(x).$$
 
 ### Taylor expansion!
 Suppose that $u$ is regular enough, let's expand the divided differences in $x$ and see what we get.
 $$
 \begin{align*}
-&\delta_{h,-}u(x) - u'(x) = \frac{u(x)-u(x-h)}{h}-u'(h) = \frac{u(x) - \left(u(x) - h u'(x) +\frac{h^2}2 u''(\xi)  \right)}{h} - u'(x)=\frac{h}{2} u''(\xi)\\
-&\lvert\delta_{h,-}u(x) - u'(x) \rvert \leq \frac{h}{2} \max_{\xi\in [a,b] } |u''(\xi)|. 
+&\delta^2_{h}u(x) - u''(x) = \frac{u(x+h)-2u(x)+u(x-h)}{h^2}-u''(h) = \\
+&\frac{u(x) + hu'(x) +\frac{h^2}{2}u''(x) + \frac{h^3}{6}u'''(x) + \frac{h^4}{24}u^{(4)}(x)  - 2u(x) u(x) - hu'(x) +\frac{h^2}{2}u''(x) - \frac{h^3}{6}u'''(x) + \frac{h^4}{24}u^{(4)}(x) }{h^2} - u''(x)\\
+&=\frac{h^2}{12} u^{(4)}(\xi)\\
+&\lvert\delta^2_{h}u(x) - u''(x) \rvert \leq \frac{h^2}{12} \max_{\xi\in [a,b] } |u^{(4)}(\xi)|. 
 \end{align*}
 $$
-
----
-<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
-
-## Lemma
-$$
-\begin{align*}
-&\lvert\delta_{h,-}u(x) - u'(x) \rvert \leq \frac{h}{2} \max_{\xi\in [a,b] } |u''(\xi)|;\\
-&\lvert\delta_{h,+}u(x) - u'(x) \rvert \leq \frac{h}{2} \max_{\xi\in [a,b] } |u''(\xi)|;\\
-&\lvert\delta_{h}u(x) - u'(x) \rvert \leq \frac{h^2}{24} \max_{\xi\in [a,b] } |u'''(\xi)|.
-\end{align*}
-$$
-
-### Proof: exercise
-
-### Errors of divided difference
-* Central divided difference has a quadratic error
-* Sided divided differences have a linear error
-
-Error-wise central is better, but physics may not be central, time for example flows in one direction, so it's complicated to use values of $u$ in the future (see Explicit Euler), also in space one might have favorite directions (we will see strong transport phenomena).
 
 
 ---
@@ -248,11 +231,14 @@ Error-wise central is better, but physics may not be central, time for example f
 ## Divided differences for two-point boundary problems
 
 Let's start with a simple boundary value problem:
-find $u:[a,b]\to \mathbb R$ such that $-u''(x)=f(x)$ for $x\in[a,b]$ and $u(a)=u(b)=0$, where $f:[a,b]\to \mathbb R$ is a given function. Suppose that we cannot find an analytical solution, how can we approximate it?
+find $u:[a,b]\to \mathbb R$ such that 
+$$-u''(x)=f(x) \text{ for } x\in[a,b]
+$$
+and $u(a)=\alpha, \,u(b)=\beta$, where $f:[a,b]\to \mathbb R$ is a given function. Suppose that we cannot find an analytical solution, how can we approximate it?
 
 We try to approximate the solution in some equispaced points $x_i$ with $i=0,\dots,N$ with $x_{i+1}=x_i+h$, $x_0=a$ and $x_N=b$.
 
-We have seen that we can approximate the second derivative with divided differences
+We have seen that we can approximate the derivatives with divided differences, for **second order** we use the **central divided difference**, so we get
 $$
 -u''(x_i) \approx \frac{u(x_{i+1}) - 2u(x_i) + u(x_{i-1})}{h^2} \qquad \forall i=0,\dots, N.
 $$
@@ -261,7 +247,6 @@ So, we can look at an approximation of $u(x_i)\approx u_i$ for all $i=0,\dots,N$
 $$
 -\frac{u_{i+1} - 2u_i + u_{i-1}}{h^2} = f(x_i) \qquad \forall i=1,\dots, N-1.
 $$
-Then, we can use the information from BC to set $u_0=u_N=0$.
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
@@ -286,7 +271,7 @@ u_2\\
 u_3\\
 \vdots\\
 u_{N-1}
-\end{bmatrix}}{=:U}
+\end{bmatrix}}_{=:\mathbf{u}}
 =
 \underbrace{\begin{bmatrix}
 f(x_1)\\
@@ -296,20 +281,22 @@ f(x_3)\\
 f(x_{N-1})
 \end{bmatrix}}_{=:F}
 $$
-We can use our favourite linear solver to find the solution $U$ from $AU=F$, with $A=-\frac1{h^2}$.
+We can use our favourite linear solver to find the solution $U$ from $A\mathbf{u}=F$, with $A=-\frac1{h^2}$.
+
+$N-1$ equations for $N+1$ unknowns! We have forgotten $u_0$ and $u_N$.
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
-## Inhomogeneous boundary conditions
-Suppose now that the Dirichlet BC are now different from zero, i.e., $u(a)=u_0=\alpha$ and $u(b)=u_N=\beta$. How can we modify the system?
+## Dirichlet Boundary Conditions
+We want to impose that $u(a)=u_0=\alpha$ and $u(b)=u_N=\beta$. How can we modify the system?
 Clearly the first equation for $u_1$ becomes
 $$
 -\frac{u_0-2u_1+u_2}{h^2} = f(x_1) \Longrightarrow -\frac{\alpha-2u_1+u_2}{h^2} = f(x_1).
 $$
 But how can we incorporate this into the system without interfering with the other equations?
-Add an artificial equation for $u_0$ and $u_N$: $u_0 = \alpha \qquad \text{and} \qquad u_N = \beta.$
-Then, we can add the equations for $u_0$ and $u_N$ to the system and solve the system as before.
+Add an artificial equation for $u_0$ and $u_N$:  $u_0 = \alpha  \text{ and } u_N = \beta.$
+Then, we can add the equations for $u_0$ and $u_N$ to the system $A\mathbf{u}=F$ and solve the system as before.
 $$
 \underbrace{-\frac{1}{h^2}\begin{bmatrix}
 -h^2 & 0 & 0 &0 & \dots & 0& 0\\
@@ -328,7 +315,7 @@ u_3\\
 \vdots\\
 u_{N-1}\\
 u_N
-\end{bmatrix}}{=:U}
+\end{bmatrix}}_{=:\mathbf{u}}
 =
 \underbrace{\begin{bmatrix}
 \alpha\\
@@ -346,15 +333,16 @@ $$
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
 ## Neumann Boundary Conditions
-Suppose now that the BC are of Neumann type on the left, i.e., $\partial_x u(a)=\alpha$ and $u(b)=\beta$. How can we modify the system?
+Suppose now that the BC are of **Neumann** type on the **left**, i.e., $\partial_x u(a)=\alpha$ and $u(b)=\beta$. How can we modify the system?
 We have to approximate at the border the derivative with a divided difference.
 $$
 \partial_x u(a) \approx \frac{u_1-u_0}{h} = \alpha. 
 $$
 
+## Exercise
+Modify the linear system to include the Neumann BC on the left and the Dirichlet BC on the right.
 
----
-<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
+
 
 ## Exercise
 Find the finite difference approximation of the homogeneous Dirichlet Poisson problem on a non uniform grid, i.e., $x_{i+1}-x_{i}\neq x_{i}-x_{i-1}$.
@@ -380,9 +368,11 @@ We can see that the matrix (excluding the Dirichlet BC) is
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
 # Finite Difference Discretization of $\partial_t u - \partial_{xx} u=0$
+* Given a spatial discretization of $\partial_xx$ we are left with $\partial_t \mathbf{u} = A\mathbf{u}$, with $A\approx -\partial_{xx}$.
 * Domain in space $\Omega=[a,b]$ and time $[0,T]$
 * Grid in space $a=x_0<x_1<\dots <x_i<\dots<x_{N_x}=b$
 * Grid in time $0=t^0<t^1<\dots<t^n<\dots<t^{N_t}=T$
+* $u^n_i\approx u(t^n,x_i)$
 
 ### Explicit Euler
 
@@ -443,7 +433,7 @@ e_{\Delta t, \Delta x}^{EE} =&\frac{u(t^{n+1},x_i)-u(t^n,x_i)}{\Delta t} - \frac
 $$
 
 Second order in space and first order in time
-
+<!-- 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
@@ -461,7 +451,7 @@ e_{\Delta t, \Delta x}^{CN} =&\frac{u(t^{n+1},x_i)-u(t^n,x_i)}{\Delta t} - \frac
 =&  \frac{\Delta t}2 \partial_{tt}u(t^n,x_i)-\frac{\Delta t}2 \partial_{tt}u(t^n,x_i) +O(\Delta t^2) + O(\Delta x^2) = O(\Delta t^2) + O(\Delta x^2)
 \end{align*}
 $$
-Second order in space and time
+Second order in space and time -->
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
@@ -493,9 +483,12 @@ $$
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
-# Nonlinear problems (Cahn-Hilliard)
+# Nonlinear problems (Allen-Cahn)
 
 $$ \partial_t u - \partial_{xx} u = u-u^3.$$
+### Spatial semidiscretization
+$$\partial_t \mathbf{u} = A \mathbf{u} + F(\mathbf{u}),$$
+where $A\approx \partial_{xx}$ and $F(\mathbf{u}) = \mathbf{u} - \mathbf{u}^3$.
 
 ### Implicit Euler
 
@@ -507,8 +500,8 @@ Stable, but nonlinear!
 ### Nonlinear solver at each time step, e.g. Newton's method
 $$
 \begin{align*}
-&\text{Find } u^{n+1} \text{ such that } F(u^{n+1})=0, \text{ where } F:\mathbb R^{N_x}\to \mathbb R^{N_x},\\
-&F(u^{n+1})_i = \frac{u^{n+1}_i-u^n_i}{\Delta t} - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{\Delta x^2}- u_i^{n+1}+(u_i^{n+1})^3\\
+&\text{Find } \mathbf{u}^{n+1} \text{ such that } R(\mathbf{u}^{n+1})=0, \text{ where } R:\mathbb R^{N_x}\to \mathbb R^{N_x},\\
+&R(u^{n+1})_i = \frac{u^{n+1}_i-u^n_i}{\Delta t} - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{\Delta x^2}- u_i^{n+1}+(u_i^{n+1})^3\\
 \end{align*}
 $$
 
@@ -518,14 +511,14 @@ $$
 # Newton's method for nonlinear problems (1/2)
 $$
 \begin{align*}
-&F(u^{n+1})_i = u^{n+1}_i-u^n_i +\Delta t\left( - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{\Delta x^2}- u_i^{n+1}+(u_i^{n+1})^3\right)\\
-&J_{u^{n+1}}F(u^{n+1})_{ij} = \partial_{u^{n+1}_j} F(u^{n+1})_i = \delta_{ij} + \Delta t\left(- \frac{\delta_{i+1,j}-2\delta_{i,j}+\delta_{i-1,j}}{\Delta x^2}- \delta_{ij}+3(u_i^{n+1})^2 \delta_{ij}\right)
+&R(u^{n+1})_i = u^{n+1}_i-u^n_i +\Delta t\left( - \frac{u_{i+1}^{n+1}-2u_i^{n+1}+u_{i-1}^{n+1}}{\Delta x^2}- u_i^{n+1}+(u_i^{n+1})^3\right)\\
+&J_{u^{n+1}}R(u^{n+1})_{ij} = \partial_{u^{n+1}_j} R(u^{n+1})_i = \delta_{ij} + \Delta t\left(- \frac{\delta_{i+1,j}-2\delta_{i,j}+\delta_{i-1,j}}{\Delta x^2}- \delta_{ij}+3(u_i^{n+1})^2 \delta_{ij}\right)
 \end{align*}
 $$
 
 $$
 \begin{align*}
-&J_{u^{n+1}}F(u) = I+\Delta t\left(-\frac{D_2}{\Delta x^2} - I + 3\textrm{diag}(u^2)I \right) =\\
+&J_{u^{n+1}}R(u) = I+\Delta t\left(-\frac{D_2}{\Delta x^2} - I + 3\textrm{diag}(u^2)I \right) =\\
 &\begin{pmatrix}
 1+\Delta t(2\frac{1}{\Delta x^2}-1+3(u_1)^2) &-\frac{\Delta t}{\Delta x^2} & 0&\dots & \dots\\
 -\frac{\Delta t}{\Delta x^2} &1+\Delta t\left(2\frac{1}{\Delta x^2}-1+3(u_2)^2\right) &-\frac{\Delta t}{\Delta x^2} &\dots & \dots\\
@@ -545,16 +538,125 @@ $$
 Solve iteratively the linear systems
 $$
 \begin{align*}
-&J_{u^{n+1}}F(u^{(k)}) \delta u^{(k)} = -F(u^{(k)})\\
+&J_{u^{n+1}}R(u^{(k)}) \delta u^{(k)} = -R(u^{(k)})\\
 &u^{(k+1)} = u^{(k)} + \delta u^{(k)}
 \end{align*}
 $$
 Starting from $u^{(0)}=u^n$.
 
-Until convergence, i.e., $\|F(u^{(k)})\|<\varepsilon$ for some tolerance $\varepsilon>0$ or until $\delta u^{(k)}$ is small enough, i.e., $\|\delta u^{(k)}\|<\varepsilon$.
+Until convergence, i.e., $\|R(u^{(k)})\|<\varepsilon$ for some tolerance $\varepsilon>0$ or until $\delta u^{(k)}$ is small enough, i.e., $\|\delta u^{(k)}\|<\varepsilon$.
+
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
 
-# LET'S CODE!!! (Finally)
+# 2 Dimensions
 
+## 2D Allen-Cahn equation
+$$
+\partial_t u - (\partial_{xx}u+\partial_{yy}u) = u-u^3,
+$$
+for $u:\Omega  \times \mathbb R^+ \to \mathbb R$, with $\Omega \subset \mathbb R^2$ provided some 
+#### Initial conditions
+$$u(x,t=0) = u_0(x), \qquad x\in \Omega.$$
+#### Boundary conditions
+$$
+\begin{align*}
+u(t,x) = u_D(t,x), \qquad t\in \mathbb R^+, x\in \Gamma_D \subset \partial \Omega,\\
+\partial_x u(t,x) \cdot \mathbf{n} = u_N(t,x), \qquad t\in \mathbb R^+, x\in \Gamma_N \subset \partial \Omega.
+\end{align*}
+$$
+
+
+
+---
+<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
+
+## Semidiscretization in 2D on a rectangle $[x_{min},x_{max}]\times [y_{min},y_{max}]$
+
+Take a grid of values, given by 
+$$\begin{align*}
+&x_{min}=x_0<x_1<\dots <x_{N_x}=x_{max},\\
+&y_{min}=y_0<y_1<\dots <y_{N_y}=y_{max}.
+\end{align*}
+$$
+Then, we can look for an approximation of $u(t,x_i,y_j)\approx u_{i,j}(t)$ for all $i=0,\dots,N_x$ and $j=0,\dots,N_y$ that solves the following system of ODEs
+$$\begin{align*}
+\begin{cases}
+&\frac{du_{i,j}}{dt} - \frac{u_{i+1,j}-2u_{i,j}+u_{i-1,j}}{\Delta x^2} - \frac{u_{i,j+1}-2u_{i,j}+u_{i,j-1}}{\Delta y^2} = u_{i,j}-u_{i,j}^3,  &\forall i=1,\dots,N_x-1, j=1,\dots,N_y-1,\\
+&\text{Initial condition}\\
+&u_{i,j}(0) = u_0(x_i,y_j), \qquad &\forall i=0,\dots,N_x, j=0,\dots,N_y,\\
+&\text{Dirichlet BC  e.g. left and right}\\
+&u_{i,j}(t) = u_D(t,x_i,y_j), \qquad &\forall t\in \mathbb R^+, i=0,N_x, j=0,\dots,N_y,\\
+&\text{Neumann BC e.g. bottom}\\
+&\frac{u_{i,1}(t)-u_{i,0}(t)}{\Delta y} = u_N(t,x_i,y_0), \qquad &\forall t\in \mathbb R^+, i=0,\dots,N_x.\\
+\end{cases}
+% &\frac{u_{N_x,j}(t)-u_{N_x-1,j}(t)}{\Delta x} = u_N(t,x_{N_x},y_j), \qquad \forall t\in \mathbb R^+, j=0,\dots,N_y,\\
+% &\frac{u_{i,1}(t)-u_{i,0}(t)}{\Delta y} = u_N(t,x_i,y_0), \qquad \forall t\in \mathbb R^+, i=0,\dots,N_x,   \\
+% &\frac{u_{i,N_y}(t)-u_{i,N_y-1}(t)}{\Delta y} = u_N(t,x_i,y_{N_y}), \qquad \forall t\in \mathbb R^+, i=0,\dots,N_x.
+\end{align*}
+$$
+
+
+
+---
+<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
+
+## Vectorization
+It's hard to deal systems of unknown matrices. We can vectorize the solution by stacking the columns of the matrix $U$ into a vector $\mathbf{u}$ of size $N_x N_y$. MATLAB's choice:
+$$\mathbf{u} = \begin{bmatrix}
+U(x_{1},y_1)\\
+U(x_{1},y_2)\\
+\vdots\\
+U(x_{1},y_{N_y})\\
+U(x_{2},y_1)\\
+\vdots\\
+U(x_{2},y_{N_y})\\
+\vdots\\
+U(x_{N_x},y_1)\\
+\vdots\\
+U(x_{N_x},y_{N_y})
+\end{bmatrix},\qquad 
+U=\begin{pmatrix}
+u_{1} & u_{N_y+1} & \dots & u_{N_y(N_x-1)+1}\\
+u_{2} & u_{N_y+2} & \dots & u_{N_y(N_x-1)+2}\\
+\vdots & \vdots & \ddots & \vdots\\
+u_{N_y} & u_{N_y+N_y} & \dots & u_{N_y N_x}
+\end{pmatrix}
+$$
+
+
+
+---
+<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
+
+## Kronecker product
+Given two matrices $A\in \mathbb R^{m\times n}$ and $B\in \mathbb R^{p\times q}$, we define the Kronecker product of $A$ and $B$ as the matrix $A\otimes B \in \mathbb R^{mp\times nq}$ given by
+$$A\otimes B = \begin{bmatrix}
+a_{11}B & \dots & a_{1n}B\\
+\vdots  & \ddots & \vdots\\
+a_{m1}B & \dots & a_{mn}B
+\end{bmatrix}.$$
+
+To perform $\partial_{xx} u$ and $\partial_{yy} u$ we can use the Kronecker product to write the system in matrix form as
+$$\begin{align*}
+&\frac{d\mathbf{u}}{dt} = \left(I_{N_y}\otimes D_x + D_y \otimes I_{N_x}\right)\mathbf{u} + F(\mathbf{u}),\\
+&D_x = \frac{1}{\Delta x^2}\begin{bmatrix}
+-2 & 1 & 0 & \dots & 0\\
+1 & -2 & 1  & \dots & 0\\
+0 & 1 & -2 & \dots & 0\\
+\vdots & \vdots & \vdots & \ddots & \vdots\\
+0 & 0 & 0 & \dots & -2
+\end{bmatrix},\qquad D_y = \frac{1}{\Delta y^2}\begin{bmatrix}
+-2 & 1 & 0 & \dots & 0\\
+1 & -2 & 1  & \dots & 0\\
+0 & 1 & -2 & \dots & 0\\
+\vdots & \vdots & \vdots & \ddots & \vdots\\
+0 & 0 & 0 & \dots & -2
+\end{bmatrix}.
+\end{align*}
+$$
+
+```matlab
+kron(D_x,speye(N_y)) + kron(speye(N_x),D_y)
+```
