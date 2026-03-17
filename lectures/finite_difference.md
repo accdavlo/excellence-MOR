@@ -3,12 +3,32 @@ marp: true
 math: mathjax
 ---
 <!--
-title: Lecture 020 Elliptic
+title: Lecture 1 Elliptic
 paginate: true
 _class: titlepage
 -->
 
-# Elliptic and Parabolic Differential Equations and Finite Difference Methods
+# Elliptic and Parabolic Partial Differential Equations and Finite Difference Methods
+
+
+
+---
+<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
+
+## Differential problems, 1D example (not a PDE, but an ODE)
+Find $u:[a,b]\to \mathbb R$ (with $u\in C^2([a,b])$) such that
+$$
+-u''(x) = f(x)
+$$
+Let's take $f(x) \equiv 1$. 
+
+The solutions of the equations are all the parabolas with -1 as coefficient of the quadratic term. To select a unique solution we need to impose some boundary conditions, for example $u(0)=u(1)=0$. The unique solution of the problem is then
+
+$$
+u(x) = \frac{1}{2}x(1-x).
+$$
+
+Let's generalize to more dimensions!
 
 ---
 
@@ -37,7 +57,7 @@ $u$ is a concentration, at equilibrium there will be zero net flux $\mathbf{F}$ 
 $$
 \int_{\partial S} \mathbf{F}\cdot \mathbf{n} \textrm{d}\Gamma = 0,
 $$
-using the Gauss-Green theorem, we have that
+using the divergence theorem, we have that
 $$
 \int_S \text{div} \mathbf{F} \textrm{d} x =\int_{\partial S} \mathbf{F}\cdot \mathbf{n} \textrm{d}\Gamma = 0, 
 $$
@@ -45,6 +65,7 @@ so $\text{div} \mathbf{F}=0$. In many applications it is reasonable to assume th
 
 Substituting we get
 $$ \text{div} \mathbf{F} = -\text{div} ( a \nabla u) = - a \Delta  u=0.$$
+
 
 
 ---
@@ -56,16 +77,16 @@ To obtain uniqueness of the solution, we need to enforce some extra constraints.
 $$u=g \text{ on }\partial \Omega.$$
 If $g\equiv 0$, then they are called homogeneous Dirichlet BC. 
 
-Elastic application -> imposing a given displacement. 
+Heat application -> thermal bath at fixed temperature. 
 
 ### Neumann boundary conditions
 $$\nabla u \cdot \textbf{n} = \frac{\partial u}{\partial \textbf{n}}  = h \text{ on }\partial \Omega.$$
 $\textbf{n}$ is the normal vector going out of the domain $\Omega$ in each point of the boundary $\partial \Omega$.
 
-Elastic application -> prescribed surface traction or stress on the boundary. 
+Heat application -> prescribed heat flux or temperature change rate on the boundary (e.g. no heat flux is an isolated boundary). 
 
 ### Existence and uniqueness of the solution
-Given the Poisson problem with a bit of Dirichlet BC, we have existence and uniqueness of the solution.
+Given the Poisson problem with a bit of Dirichlet BC and $f\in L^2(\Omega)$, we have existence and uniqueness of the solution.
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
@@ -74,7 +95,7 @@ Given the Poisson problem with a bit of Dirichlet BC, we have existence and uniq
 
 Given a domain $\Omega \in \mathbb R^d$ we look for a solution $u:\Omega \times \mathbb R^+ \to \mathbb R$ solution of 
 
-$$\partial_t u(t,x) -a \Delta u(t,x) = f(t,x,u),\qquad \partial_tu-a\partial_{xx}u=f\,\,\text{(in 1D)},$$
+$$\partial_t u(t,x) -a \Delta u(t,x) = f(t,x,u),\qquad \partial_tu-a\partial_{xx}u=f\,\,\text{(in 1D + time)},$$
 with $a>0$.
 
 ### Physical applications
@@ -127,7 +148,7 @@ $$
 $$
 \begin{cases}
     \Omega = [0,1]\\
-    \partial_t u(t,x) -a \Delta  u(t,x) = (u(x)-u^3(x)), & t>0, x\in \Omega:=[0,1]^d\\
+    \partial_t u(t,x) -a \Delta  u(t,x) = r(u(x)-u^3(x)), & t>0, x\in \Omega:=[0,1]^d,\, a,r>0,\\
     u(0,x)=u_0(x), & x\in [0,1]^d,\\
     u(t,0)=u(t,1)=0, & \forall t \in \mathbb R^+, x\in \partial \Omega.
 \end{cases}
@@ -286,7 +307,7 @@ We can use our favourite linear solver to find the solution $U$ from $A\mathbf{u
 $N-1$ equations for $N+1$ unknowns! We have forgotten $u_0$ and $u_N$.
 
 ---
-<style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
+<style scoped>section{font-size:21px;padding:50px;padding-top:0px}</style>
 
 ## Dirichlet Boundary Conditions
 We want to impose that $u(a)=u_0=\alpha$ and $u(b)=u_N=\beta$. How can we modify the system?
@@ -328,6 +349,10 @@ f(x_{N-1})\\
 \end{bmatrix}}_{=:F}
 $$
 
+```matlab
+e = ones(N,1);
+A=spdiags([-1*e 2*e -1*e],[-1 0 1],N,N)/h^2; A(1,:)=0; A(1,1)=1; A(N,:)=0; A(N,N)=1;
+```
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:0px}</style>
