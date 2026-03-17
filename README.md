@@ -1,5 +1,5 @@
-# Model order reduction course for excellence programme at Castelnuovo in Sapienza
-Repository of the excellence course on Model Order Reduction at Castelnuovo in Sapienza by [Alessandro Alla](https://www.alessandroalla.com/) and [Davide Torlo](https://davidetorlo.it).
+# "Reduced order methods to approximate parametric PDEs" course for excellence programme at Castelnuovo in Sapienza
+Repository of the excellence course on "Metodi ridotti per approssimare PDEs parametriche" at Castelnuovo in Sapienza by [Alessandro Alla](https://www.alessandroalla.com/) and [Davide Torlo](https://davidetorlo.it).
 
 
 # Programme
