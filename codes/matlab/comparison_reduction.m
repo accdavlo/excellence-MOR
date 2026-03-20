@@ -8,6 +8,8 @@ mus = linspace(1,3,Nmu);
 y_exact = @(x,mu) (1+log(mu)).*(x<(mu/4)); %exp(-(100*(x-mu/4)).^2);
 yy = y_exact(XX,MM);
 
+load_structures = true;
+
 % Plot the solutions for varying mus
 figure;
 hold on;
@@ -35,19 +37,20 @@ n_rom = 50;
 V_rom = A(:,1:n_rom);
 predicted_test{"POD"} = V_rom*(V_rom'*yy_test);
 
-% Autoencoder
-fprintf("Autoencoder\n")
-[autoenc,info_autoencoder] = fun_autoencoder(xx,mus,yy);
-info_NNs{"autoencoder"} = info_autoencoder;
-predicted_test{"autoencoder"} = predict(autoenc, yy_test')';
-
-
 % convolutional_autoencoder
 fprintf("Convolutional Autoencoder\n");
-[conv_autoenc,info_conv_autoenc] = fun_convolutional_autoencoder_500(xx,mus,yy);
+if load_structures && isfile("convolutional_autoencoder.mat")
+    tmp = load("convolutional_autoencoder.mat");
+    conv_autoenc = tmp.conv_autoenc;
+    info_conv_autoenc = tmp.info_conv_autoenc;
+else
+    [conv_autoenc,info_conv_autoenc] = fun_convolutional_autoencoder_500(xx,mus,yy);
+    save("convolutional_autoencoder.mat","conv_autoenc","info_conv_autoenc");
+end
+
 info_NNs{"convolutional autoencoder"} = info_conv_autoenc;
 
-% Test data for autoencoder
+% Test data for convolutional autoencoder
 test_data = cell(1,Nmu_test);
 for i =1:Nmu_test
     test_data{i} = y_exact(xx,mu_test(i))';
@@ -55,9 +58,31 @@ end
 predicted_test{"convolutional autoencoder"} = reshape(minibatchpredict(conv_autoenc, test_data),Nx,Nmu_test);
 
 
+
+% Autoencoder
+fprintf("Autoencoder\n")
+if load_structures && isfile("autoencoder.mat")
+    tmp = load("autoencoder.mat");
+    autoenc = tmp.autoenc;
+    info_autoencoder = tmp.info_autoencoder;
+else
+   [autoenc,info_autoencoder] = fun_autoencoder(xx,mus,yy);
+    save("autoencoder.mat","autoenc","info_autoencoder");
+end
+info_NNs{"autoencoder"} = info_autoencoder;
+predicted_test{"autoencoder"} = predict(autoenc, yy_test')';
+
 % Discrete learning
 fprintf("Discrete learning \n");
-[discrete_learning,info_discrete_learning] = fun_discrete_learning(xx,mus,yy);
+if load_structures && isfile("discrete_learning.mat")
+    tmp = load("discrete_learning.mat");
+    discrete_learning = tmp.discrete_learning;
+    info_discrete_learning = tmp.info_discrete_learning;
+else
+    [discrete_learning,info_discrete_learning] = fun_discrete_learning(xx,mus,yy);
+    save("discrete_learning.mat","discrete_learning","info_discrete_learning");
+end
+
 info_NNs{"discrete learning"} = info_discrete_learning;
 
 % predict 
@@ -68,7 +93,15 @@ end
 
 % Operator Learning
 fprintf("Operator Learning\n");
-[operator_learning, info_operator_learning] = fun_operator_learning(xx, mus, yy);
+
+if load_structures && isfile("operator_learning.mat")
+    tmp = load("operator_learning.mat");
+    operator_learning = tmp.operator_learning;
+    info_operator_learning = tmp.info_operator_learning;
+else
+    [operator_learning, info_operator_learning] = fun_operator_learning(xx, mus, yy);
+    save("operator_learning.mat","operator_learning","info_operator_learning");
+end
 info_NNs{"operator learning"} = info_operator_learning;
 
 predicted_test{"operator learning"} = zeros(Nx,Nmu_test);
@@ -98,7 +131,7 @@ saveas(fig,"comparison_one_test_param.pdf")
 
 
 fig=figure();
-colors = ['r','b','m','c','y','g'];
+colors = ['r','b','m','c','g'];
 for i = 1: numel(keysList)
     method = keysList(i);
     all_predictions = predicted_test{method};
@@ -106,7 +139,7 @@ for i = 1: numel(keysList)
         if imu==1
             plot(xx, all_predictions(:,imu), 'Color',colors(i), 'LineWidth',0.2, 'DisplayName', method);
         else
-            plot(xx, all_predictions(:,imu), 'Color',colors(i), 'LineWidth',0.2);
+            plot(xx, all_predictions(:,imu), 'Color',colors(i), 'LineWidth',0.2, 'HandleVisibility', 'off');
         end
         hold on
     end
@@ -115,7 +148,7 @@ for imu =1:Nmu_test
     if imu==1
         plot(xx,yy_test(:,imu),'Color','k','LineWidth',0.2,'DisplayName',"exact");
     else
-        plot(xx,yy_test(:,imu),'Color','k','LineWidth',0.2);
+        plot(xx,yy_test(:,imu),'Color','k','LineWidth',0.2, 'HandleVisibility', 'off');
     end
 end
 legend show;
