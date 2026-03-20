@@ -7,7 +7,7 @@ Repository of the excellence course on "Metodi ridotti per approssimare PDEs par
 | Topic | Slides | Notes | Code | Recordings |
 |-------|------------|-------------|--------|-----|
 | Finite difference for elliptic/parabolic problems | [pdf](lectures/finite_difference.pdf) [html](https://html-preview.github.io/?url=https://github.com/accdavlo/excellence-MOR/blob/main/lectures/finite_difference.html) | [Notes](notes/2026-03-17-Note-16-08.pdf) |[Matlab Code](codes/matlab/finite_difference_parabolic.mlx) | [Audio](https://drive.google.com/drive/folders/1iOJq5Hj2XyEpOOdLpIJz0_G2D84OYQ3d?usp=sharing) |
-| Proper Orthogonal Decomposition |.[pdf] (lectures/Pod&svd.pdf) | |||
+| Proper Orthogonal Decomposition |.[pdf] (./lectures/Pod_svd.pdf) | |||
 | DEIM/DMD | | |||
 | POD-NN and autoencoders | | | [Matlab POD-NN](codes/matlab/PODNN.m)||
 
