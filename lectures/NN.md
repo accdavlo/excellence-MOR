@@ -17,25 +17,25 @@ _class: titlepage
 
 ![bg right:40% width:500](img/network.svg)
 
-Neural networks (NNs) are a class of machine learning algorithms that are inspired by the structure and function of the human brain. They consist of interconnected nodes (neurons) organized in layers, where each connection has an associated weight.
+**Feedforward Neural networks** (NNs) are a class of **machine learning** algorithms that are inspired by the structure and function of the human brain. They consist of interconnected nodes (neurons) organized in layers, where each connection has an associated weight. The simplest type of NN is the **multilayer perceptron** (MLP), which is a feedforward NN with one or more hidden layers.
 
-From a mathematical point of view, a NN is a function defined as a composition of simpler functions. In the picture, the blue circles are the **input** variables, the green circles are the **output** variables, all the lines represent affine transformations and the black circles are nonlinear (simple) **activation functions**.
+From a mathematical point of view, a **MLP** is a function defined as a composition of simpler functions. In the picture, the blue circles are the **input** variables, the green circles are the **output** variables, all the lines represent affine transformations and the black circles are nonlinear (simple) **activation functions**.
 The layers in black are called **hidden layers**.
 
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
 
-# Neural Networks
+# Neural Networks (MLP)
 
 ![bg right:40% width:500](img/network.svg)
 
 $$NN(x) := \sigma( A_N\dots \sigma(A_2\sigma(A_1x+b_1)+b_2)\dots +b_N)$$
 where 
 * $N$ is the number of layers of the NN called the **depth** 
-* $n_i$ $i=0,\dots,N$ is the number of nodes in each layer
-* $\sigma$ is a nonlinear activation function
-* $A_i\in \mathbb R^{n_i\times n_{i-1}}$ for $i=1,\dots,N$ and $b_i\in \mathbb R^{n_i}$ are the weights and biases of the network. These have to be determined, they are not known a priori.
+* $n_i$ $i=0,\dots,N$ is the number of **nodes** in each layer
+* $\sigma$ is a **nonlinear activation function**
+* $A_i\in \mathbb R^{n_i\times n_{i-1}}$ for $i=1,\dots,N$ and $b_i\in \mathbb R^{n_i}$ are the **weights** and **biases** of the network. These have to be determined, they are not known a priori.
 
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
@@ -62,7 +62,7 @@ Another task typically required to NN is the **classification**.
 
 We focus on the regression task:
 
-Find weights $A_i$ and biases $b_i$, which are often collected into the parameters $\theta$, that best approximate a function $f$:
+Find weights $A_i$ and biases $b_i$, which are often collected into the parameters $\theta$, that best approximate a function $f$, in the sense of minimizing a **loss function**, for example
 $$
 \min_{\theta } \lVert NN_\theta(\cdot) -f (\cdot) \rVert
 $$
@@ -131,10 +131,15 @@ h_k:=\sigma(f_k)\\
 \end{align*}
 $$
 
+
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
 
+
+![bg right:30% width:300](img/forward_pass.png)
 ## Backward propagation
+
+
 We can easily compute the gradient recursively using the chain rule!
 $$
 \begin{align*}
@@ -169,9 +174,8 @@ The space where we look for $\theta$ is very very high dimensional and it is rea
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
 
-
-For model order reduction, we are more interested in regression. 
-## MOR examples of functions to learn
+ 
+## Where NN can help MOR?
 * $(t,\theta) \mapsto u^\ell(t,\theta)$ the maps from parameters to the reduced coefficient of the POD
 * $(t,\theta) \mapsto \mathbf{u}(t,\theta)$ the maps from parameters to the discrete solution 
 * $(x,t,\theta) \mapsto u(x,t,\theta)$ the maps from space and parameters to the (continuous) solution
@@ -267,13 +271,14 @@ In the online phase, we just look at the decoder and at the MLP.
 # Autoencoders in MOR context
 
 ### Advantage
-* Can capture nonlinear features
-* Non-intrusive: no need of knowing the full order model solver
+* Can capture **nonlinear** features
+* Can solve the **slow decay of the singular values** problem
+* **Non-intrusive**: no need of knowing the full order model solver
 
 ### Disadvantage
-* Need to choose a priori the latent space dimension
-* The training might be expensive, especially for large datasets and high-dimensional inputs
-* Not obvious how to choose hyperparameters (number of layers, number of nodes, activation functions, etc.)
+* Need to choose **a priori** the latent space dimension
+* The training might be **expensive**, especially for large datasets and high-dimensional inputs
+* Not obvious how to choose **hyperparameters** (number of layers, number of nodes, activation functions, etc.)
 
 
 ---
