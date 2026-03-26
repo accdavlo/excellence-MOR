@@ -6,14 +6,14 @@ mus = linspace(1,3,Nmu);
 [MM,XX] = meshgrid(mus,xx);
 % problem_name = "sin";
 % y_exact = @(x,mu) sin(2*pi*x.^exp(mu));
-% problem_name = "disc";
-% y_exact = @(x,mu) (1+log(mu)).*(x<(mu/4));
-problem_name = "gauss";
-y_exact = @(x,mu) exp(-(100*(x-mu/4)).^2);
+problem_name = "disc";
+y_exact = @(x,mu) (1+log(mu)).*(x<(mu/4));
+% problem_name = "gauss";
+% y_exact = @(x,mu) exp(-(100*(x-mu/4)).^2);
 
 yy = y_exact(XX,MM);
 
-load_structures = false;
+load_structures = true;
 
 % Plot the solutions for varying mus
 figure;
