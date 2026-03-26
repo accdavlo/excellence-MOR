@@ -4,11 +4,16 @@ Nmu = 200;
 xx = linspace(0,1,Nx);
 mus = linspace(1,3,Nmu);
 [MM,XX] = meshgrid(mus,xx);
-%y_exact = @(x,mu) sin(2*pi*x.^exp(mu));
-y_exact = @(x,mu) (1+log(mu)).*(x<(mu/4)); %exp(-(100*(x-mu/4)).^2);
+% problem_name = "sin";
+% y_exact = @(x,mu) sin(2*pi*x.^exp(mu));
+% problem_name = "disc";
+% y_exact = @(x,mu) (1+log(mu)).*(x<(mu/4));
+problem_name = "gauss";
+y_exact = @(x,mu) exp(-(100*(x-mu/4)).^2);
+
 yy = y_exact(XX,MM);
 
-load_structures = true;
+load_structures = false;
 
 % Plot the solutions for varying mus
 figure;
@@ -32,20 +37,20 @@ predicted_test = dictionary();
 info_NNs = dictionary();
 
 % POD
-n_rom = 50;
+n_rom = 10;
 [A,B,C]=svd(yy);
 V_rom = A(:,1:n_rom);
 predicted_test{"POD"} = V_rom*(V_rom'*yy_test);
 
 % convolutional_autoencoder
 fprintf("Convolutional Autoencoder\n");
-if load_structures && isfile("convolutional_autoencoder.mat")
-    tmp = load("convolutional_autoencoder.mat");
+if load_structures && isfile(fullfile(problem_name,"convolutional_autoencoder.mat"))
+    tmp = load(fullfile(problem_name,"convolutional_autoencoder.mat"));
     conv_autoenc = tmp.conv_autoenc;
     info_conv_autoenc = tmp.info_conv_autoenc;
 else
     [conv_autoenc,info_conv_autoenc] = fun_convolutional_autoencoder_500(xx,mus,yy);
-    save("convolutional_autoencoder.mat","conv_autoenc","info_conv_autoenc");
+    save(fullfile(problem_name,"convolutional_autoencoder.mat"),"conv_autoenc","info_conv_autoenc");
 end
 
 info_NNs{"convolutional autoencoder"} = info_conv_autoenc;
@@ -61,26 +66,26 @@ predicted_test{"convolutional autoencoder"} = reshape(minibatchpredict(conv_auto
 
 % Autoencoder
 fprintf("Autoencoder\n")
-if load_structures && isfile("autoencoder.mat")
-    tmp = load("autoencoder.mat");
+if load_structures && isfile(fullfile(problem_name,"autoencoder.mat"))
+    tmp = load(fullfile(problem_name,"autoencoder.mat"));
     autoenc = tmp.autoenc;
     info_autoencoder = tmp.info_autoencoder;
 else
    [autoenc,info_autoencoder] = fun_autoencoder(xx,mus,yy);
-    save("autoencoder.mat","autoenc","info_autoencoder");
+    save(fullfile(problem_name,"autoencoder.mat"),"autoenc","info_autoencoder");
 end
 info_NNs{"autoencoder"} = info_autoencoder;
 predicted_test{"autoencoder"} = predict(autoenc, yy_test')';
 
 % Discrete learning
 fprintf("Discrete learning \n");
-if load_structures && isfile("discrete_learning.mat")
-    tmp = load("discrete_learning.mat");
+if load_structures && isfile(fullfile(problem_name,"discrete_learning.mat"))
+    tmp = load(fullfile(problem_name,"discrete_learning.mat"));
     discrete_learning = tmp.discrete_learning;
     info_discrete_learning = tmp.info_discrete_learning;
 else
     [discrete_learning,info_discrete_learning] = fun_discrete_learning(xx,mus,yy);
-    save("discrete_learning.mat","discrete_learning","info_discrete_learning");
+    save(fullfile(problem_name,"discrete_learning.mat"),"discrete_learning","info_discrete_learning");
 end
 
 info_NNs{"discrete learning"} = info_discrete_learning;
@@ -94,13 +99,13 @@ end
 % Operator Learning
 fprintf("Operator Learning\n");
 
-if load_structures && isfile("operator_learning.mat")
-    tmp = load("operator_learning.mat");
+if load_structures && isfile(fullfile(problem_name,"operator_learning.mat"))
+    tmp = load(fullfile(problem_name,"operator_learning.mat"));
     operator_learning = tmp.operator_learning;
     info_operator_learning = tmp.info_operator_learning;
 else
     [operator_learning, info_operator_learning] = fun_operator_learning(xx, mus, yy);
-    save("operator_learning.mat","operator_learning","info_operator_learning");
+    save(fullfile(problem_name,"operator_learning.mat"),"operator_learning","info_operator_learning");
 end
 info_NNs{"operator learning"} = info_operator_learning;
 
@@ -126,8 +131,8 @@ end
 plot(xx,yy_test(:,1),'LineWidth',0.2,'DisplayName',"exact");
 legend show;
 hold off;
-saveas(fig,"comparison_one_test_param.png")
-saveas(fig,"comparison_one_test_param.pdf")
+saveas(fig,fullfile(problem_name,"comparison_one_test_param.png"))
+saveas(fig,fullfile(problem_name,"comparison_one_test_param.pdf"))
 
 
 fig=figure();
@@ -153,8 +158,8 @@ for imu =1:Nmu_test
 end
 legend show;
 hold off;
-saveas(fig,"comparison_all_test_param.png")
-saveas(fig,"comparison_all_test_param.pdf")
+saveas(fig,fullfile(problem_name,"comparison_all_test_param.png"))
+saveas(fig,fullfile(problem_name,"comparison_all_test_param.pdf"))
 
 
 
@@ -175,5 +180,5 @@ ylabel('Loss');
 title('Training Loss for Different Methods');
 legend show;
 hold off;
-saveas(fig, "loss_comparison.png");
-saveas(fig, "loss_comparison.pdf");
+saveas(fig, fullfile(problem_name,"loss_comparison.png"));
+saveas(fig, fullfile(problem_name,"loss_comparison.pdf"));

@@ -112,7 +112,7 @@ $$
 <style scoped>section{font-size:23px;padding:50px;padding-top:50px}</style>
 
 # Training a Neural Network: forward pass and backpropagation
-To find a minimum of the function we need to *put to 0* the gradient, so we use a gradient descent procedure:
+To find a minimum of the function we need to *put to 0* the gradient, so we use a **gradient descent** procedure:
 $$
 \theta_i^{n+1}=\theta^n_i - \eta \nabla_{\theta_i} \mathcal{L}(\theta^n)
 $$
@@ -137,7 +137,7 @@ $$
 
 
 ![bg right:30% width:300](img/forward_pass.png)
-## Backward propagation
+## Back(ward) propagation
 
 
 We can easily compute the gradient recursively using the chain rule!
@@ -206,7 +206,12 @@ The space where we look for $\theta$ is very very high dimensional and it is rea
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:20px}</style>
 
-# LET'S CODE THE POD-NN!
+# LET'S CODE THE POD-NN! (in MATLAB)
+
+Not the easiest choice, python would have been much better (pytorch, tensorflow, keras, etc.) but it is possible to do it in MATLAB as well. We will use the **Deep Learning Toolbox**.
+
+ChatGPT once told me:
+![width:1000](img/chatgpt_matlab.png)
 
 
 ---

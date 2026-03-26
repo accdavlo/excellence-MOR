@@ -3,7 +3,7 @@ xx = linspace(0,1,500);
 mus = linspace(1,3,50);
 [XX, MM] = meshgrid(xx,mus);
 y_exact = @(x,mu) sin(2*pi*x.^exp(mu));
-y_exact = @(x,mu) exp(-(100*(x-mu/4)).^2);
+%y_exact = @(x,mu) (1+log(mu)).*(x<(mu/4));
 yy = y_exact(XX,MM);
 
 % Plot the solutions for varying mus
@@ -16,7 +16,7 @@ title("Solution manifold");
 xlabel("x");
 ylabel("Solutions");
 
-[U,S,V] = svd(yy);
+[U,S,V] = svd(yy,"econ");
 
 figure()
 semilogy(diag(S));
