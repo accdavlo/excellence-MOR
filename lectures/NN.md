@@ -354,7 +354,7 @@ $$
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:20px}</style>
 
-# Learning the solution operator
+# Learning the solution as a function
 
 
 ![width:1500](img/MLP_xmu_u.png)
@@ -368,7 +368,7 @@ $$
 ---
 <style scoped>section{font-size:23px;padding:50px;padding-top:20px}</style>
 
-# Learning the solution operator
+# Learning the solution as a function
 
 ![bg right:40% width:400](img/MLP_xmu_u.png)
 
