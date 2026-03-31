@@ -1,4 +1,4 @@
-function [net,info] = fun_autoencoder_learning(xx,mus,yy)
+function [net,info] = fun_autoencoder(xx,mus,yy)
 
 Nmu = length(mus);
 Nx = length(xx); % Determine the number of x values
