@@ -25,3 +25,16 @@ The classes will be held at the new Centro di Calcolo Laboratory at ground floor
 |2026-03-26 | 11:00-13:00 | DEIM/DMD |
 |2026-03-31 | 15:00-17:00 | POD-NN and autoencoders |
 
+
+# References
+1. [Alla's notes POD + EIM](./notes/33CBM12-eBook.pdf)
+1. Hesthaven, J., Rozza G. and Stamm B. Certified Reduced Basis Methods for Parametrized Partial Differential Equations. Springer, 2016. [Riduzione del Modello] [https://link.springer.com/book/10.1007/978-3-319-22470-1](https://link.springer.com/book/10.1007/978-3-319-22470-1)
+1. Convolutional autoencoders for MOR [Fresca Dede' Manzoni](https://link.springer.com/article/10.1007/s10915-021-01462-7)
+
+# Project ideas
+1. Heat equations with a more complex geometry and parametric diffusivity [see notebook](https://github.com/accdavlo/calcolo-scientifico/blob/main/codes/ROM_with_FEniCS.ipynb)
+1. POD on Allen-Cahn with fixed random initial conditions and parametric diffusivity
+1. Transport equation with parametric velocity field with POD vs autoencoder or other NNs
+1. Pattern formations with autoencoders vs POD
+1. Dynamic low rank approximation
+1. Error estimators for reduced order models [Hesthaven's book]
