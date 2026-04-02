@@ -32,9 +32,10 @@ The classes will be held at the new Centro di Calcolo Laboratory at ground floor
 1. Convolutional autoencoders for MOR [Fresca Dede' Manzoni](https://link.springer.com/article/10.1007/s10915-021-01462-7)
 
 # Project ideas
-1. Heat equations with a more complex geometry and parametric diffusivity [see notebook](https://github.com/accdavlo/calcolo-scientifico/blob/main/codes/ROM_with_FEniCS.ipynb)
-1. POD on Allen-Cahn with fixed random initial conditions and parametric diffusivity
-1. Transport equation with parametric velocity field with POD vs autoencoder or other NNs
-1. Pattern formations with autoencoders vs POD
+## Teorical projects
 1. Dynamic low rank approximation
-1. Error estimators for reduced order models [Hesthaven's book]
+2. Error estimators for reduced order models [Hesthaven's book] or Something UQ and MOR https://arxiv.org/pdf/1802.08724
+## Practical projects
+1. https://arxiv.org/pdf/2506.11641 symmetric autoencoder
+2. (pattern) POD-NN (magari confronta con quello sotto)
+3. (pattern) POD-DEIM (magari confronta con quello sopra)
